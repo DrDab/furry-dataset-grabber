@@ -27,13 +27,13 @@ public class FurryCollectorMain
 		
 		boolean sfw = sc.nextLine().toLowerCase().indexOf("y") != -1;
 		
-		// To increase sample set diversity, comment lines 32-37
+		// To increase sample set diversity, uncomment lines 32-37
 		// WARNING: Doing this will enable explicit content in your sample set.
-		if (!sfw)
-		{
-			System.out.println("Kirby's calling the police");
-			return;
-		}
+		//if (!sfw)
+		//{
+		//	System.out.println("Kirby's calling the police");
+		//	return;
+		//}
 		
 		double eta = total * 0.26;
 		
