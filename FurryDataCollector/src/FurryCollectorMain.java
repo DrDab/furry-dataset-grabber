@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.regex.Pattern;
@@ -16,6 +17,15 @@ public class FurryCollectorMain
 {
 	public static void main(String[] args)
 	{
+		try
+		{
+			SQLUtils.initConnection("test.db");
+			SQLUtils.initTables();
+		} 
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
 		System.setProperty("http.agent", "FurryDataCollector/1.0");
 		
 		Scanner sc = new Scanner(System.in);
@@ -27,7 +37,7 @@ public class FurryCollectorMain
 		
 		boolean sfw = sc.nextLine().toLowerCase().indexOf("y") != -1;
 		
-		// To increase sample set diversity, uncomment lines 32-37
+		// To increase sample set diversity, uncomment the 4 lines following the next line.
 		// WARNING: Doing this will enable explicit content in your sample set.
 		//if (!sfw)
 		//{
