@@ -39,11 +39,11 @@ public class FurryCollectorMain
 		
 		// To increase sample set diversity, comment the 4 lines following the next line.
 		// WARNING: Doing this will enable explicit content in your sample set.
-		if (!sfw)
-		{
-			System.out.println("Kirby's calling the police");
-			return;
-		}
+		//if (!sfw)
+		//{
+		//	System.out.println("Kirby's calling the police");
+		//	return;
+		//}
 		
 		double eta = total * 0.26;
 		
@@ -102,6 +102,24 @@ public class FurryCollectorMain
 			{
 				Entry entry = entries.get(i);
 				String tags = entry.tags;
+				try
+				{
+					int ratingInt = 0;
+					if (entry.rating.equals("e"))
+					{
+						ratingInt = 2;
+					}
+					else if (entry.rating.equals("q"))
+					{
+						ratingInt = 1;
+					}
+					SQLUtils.addEntry(entry.id, tags, "unknown", ratingInt, entry.score, "unknown source", entry.creationDate);
+				} 
+				catch (SQLException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				int accum = actual + i;
 				System.out.printf("[%d / %d] %s\n", accum + 1, total, entry);
 				if (tags.contains("feline"))
@@ -233,7 +251,9 @@ public class FurryCollectorMain
 			String tags = curObj.getString("tags");
 			int score = curObj.getInt("score");
 			int id = curObj.getInt("id");
-			al.add(new Entry(id, url, tags, rating, score));
+			JSONObject createdAt = curObj.getJSONObject("created_at");
+			long creationdate = createdAt.getLong("s");
+			al.add(new Entry(id, url, tags, rating, score, creationdate));
 		}
 		return al;
 	}
