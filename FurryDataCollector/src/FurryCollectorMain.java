@@ -144,7 +144,7 @@ public class FurryCollectorMain
 					String[] extArr = entry.fileURL.split(Pattern.quote("."));
 					downloadFile(entry.fileURL, f, entry.id + "." + extArr[extArr.length - 1]);
 				}
-				else if (tags.contains("pokémon"))
+				else if (tags.contains("pokÃ©mon"))
 				{
 					// other pokemon
 					File f = new File(outputDir, "pokemon");
@@ -230,22 +230,43 @@ public class FurryCollectorMain
 	
 	public static String getJSONDataNewest(boolean sfw, int imageCount, int before_id)
 	{
+		return getJSONDataNewest(sfw, imageCount, before_id, null);
+	}
+	
+	public static String getJSONDataNewest(boolean sfw, int imageCount, int before_id, ArrayList<String> tags)
+	{
 		String url_base = "";
 		if (sfw)
 		{
-			url_base += "https://e926.net";
+			url_base += "https://e926.net/post/index.json?";
 		}
 		else
 		{
-			url_base += "https://e621.net";
+			url_base += "https://e621.net/post/index.json?";
 		}
+		
+		if (imageCount != -1)
+		{
+			url_base += "&limit=" + imageCount;
+		}
+		
 		if (before_id != -1)
 		{
-			url_base += "/post/index.json?limit=" + imageCount + "&before_id=" + before_id;
+			url_base += "&before_id=" + before_id;
 		}
-		else
+		
+		if (tags != null)
 		{
-			url_base += "/post/index.json?limit=" + imageCount;
+			url_base += "&tags=";
+			for (int i = 0; i < tags.size(); i++)
+			{
+				String tag = tags.get(i).replaceAll(" ", "_");
+				url_base += tag;
+				if (i < tags.size() - 1)
+				{
+					url_base += "+";
+				}
+			}
 		}
 		
 		try
