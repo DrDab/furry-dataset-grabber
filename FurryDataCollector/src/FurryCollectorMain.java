@@ -37,6 +37,8 @@ public class FurryCollectorMain
 		{
 			searchTags = new ArrayList<String>();
 			System.out.println("Please enter the tags you are searching for, seperated by a space for each tag.");
+			System.out.println("To blacklist a tag, put a \"-\" before the blacklisted tag. For example, \"-absurd_res\"");
+			System.out.println("");
 			String tagsUnfiltered = sc.nextLine();
 			String[] split = tagsUnfiltered.trim().split(" ");
 			for (String cur : split)
@@ -45,7 +47,7 @@ public class FurryCollectorMain
 			}
 		}
 		
-		System.out.println("Enable educational mode? (Y/N)");
+		System.out.println("Enable SFW mode? (Y/N)");
 		boolean sfw = sc.nextLine().toLowerCase().indexOf("y") != -1;
 		
 		// To increase sample set diversity, comment the 4 lines following the next line.
