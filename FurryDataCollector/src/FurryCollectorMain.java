@@ -27,11 +27,25 @@ public class FurryCollectorMain
 		System.out.println("Please select a mode:");
 		System.out.println("[C]reate an archive of ESix data");
 		System.out.println("[G]enerate training data for CV classification");
-		
 		boolean archiveMode = sc.nextLine().toLowerCase().contains("c");
 		
-		System.out.println("Enable educational mode? (Y/N)");
+		System.out.println("Would you like to search for custom tags? (Y/N)");
+		boolean customTags = sc.nextLine().toLowerCase().indexOf("y") != -1;
 		
+		ArrayList<String> searchTags = null;
+		if (customTags)
+		{
+			searchTags = new ArrayList<String>();
+			System.out.println("Please enter the tags you are searching for, seperated by a space for each tag.");
+			String tagsUnfiltered = sc.nextLine();
+			String[] split = tagsUnfiltered.trim().split(" ");
+			for (String cur : split)
+			{
+				searchTags.add(cur);
+			}
+		}
+		
+		System.out.println("Enable educational mode? (Y/N)");
 		boolean sfw = sc.nextLine().toLowerCase().indexOf("y") != -1;
 		
 		// To increase sample set diversity, comment the 4 lines following the next line.
@@ -97,7 +111,7 @@ public class FurryCollectorMain
 		int actual = total - remaining;
 		while (remaining > 0)
 		{
-			String jsonData = getJSONDataNewest(sfw, remaining, before_id);
+			String jsonData = getJSONDataNewest(sfw, remaining, before_id, searchTags);
 			ArrayList<Entry> entries = getEntriesFromJSONData(jsonData);
 			
 			if (entries.size() == 0)
