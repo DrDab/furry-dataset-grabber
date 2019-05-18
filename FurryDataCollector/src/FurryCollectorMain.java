@@ -17,21 +17,18 @@ public class FurryCollectorMain
 {
 	public static void main(String[] args)
 	{
-		try
-		{
-			SQLUtils.initConnection("test.db");
-			SQLUtils.initTables();
-		} 
-		catch (SQLException e)
-		{
-			e.printStackTrace();
-		}
 		System.setProperty("http.agent", "FurryDataCollector/1.0");
 		
 		Scanner sc = new Scanner(System.in);
 		
 		System.out.println("Please enter the number of entries to grab.");
 		int total = Integer.parseInt(sc.nextLine());
+		
+		System.out.println("Please select a mode:");
+		System.out.println("[C]reate an archive of ESix data");
+		System.out.println("[G]enerate training data for CV classification");
+		
+		boolean archiveMode = sc.nextLine().toLowerCase().contains("c");
 		
 		System.out.println("Enable educational mode? (Y/N)");
 		
@@ -77,11 +74,21 @@ public class FurryCollectorMain
 			return;
 		}
 		
-		File outputDir = new File("outputs");
+		File outputDir = archiveMode ? new File("archive") : new File("trainingdata");
 		
 		if (!outputDir.exists())
 		{
 			outputDir.mkdir();
+		}
+		
+		try
+		{
+			SQLUtils.initConnection(archiveMode ? "archive/sources.db" : "trainingdata/sources.db");
+			SQLUtils.initTables();
+		} 
+		catch (SQLException e)
+		{
+			e.printStackTrace();
 		}
 		
 		int unknown = 0;
@@ -113,7 +120,7 @@ public class FurryCollectorMain
 					{
 						ratingInt = 1;
 					}
-					SQLUtils.addEntry(entry.id, tags, "unknown", ratingInt, entry.score, "unknown source", entry.creationDate);
+					SQLUtils.addEntry(entry.id, tags, entry.artists.toString(), ratingInt, entry.score, entry.sources == null ? "unknown sources" : entry.sources.toString(), entry.creationDate);
 				} 
 				catch (SQLException e)
 				{
@@ -122,70 +129,10 @@ public class FurryCollectorMain
 				}
 				int accum = actual + i;
 				System.out.printf("[%d / %d] %s\n", accum + 1, total, entry);
-				if (tags.contains("feline"))
+				
+				if (archiveMode)
 				{
-					File f = new File(outputDir, "feline");
-					if (!f.exists())
-					{
-						f.mkdir();
-					}
-					String[] extArr = entry.fileURL.split(Pattern.quote("."));
-					downloadFile(entry.fileURL, f, entry.id + "." + extArr[extArr.length - 1]);
-				}
-				else if (tags.contains("canine"))
-				{
-					File f = new File(outputDir, "canine");
-					if (!f.exists())
-					{
-						f.mkdir();
-					}
-					String[] extArr = entry.fileURL.split(Pattern.quote("."));
-					downloadFile(entry.fileURL, f, entry.id + "." + extArr[extArr.length - 1]);
-				}
-				else if (tags.contains("dragon"))
-				{
-					File f = new File(outputDir, "dragon");
-					if (!f.exists())
-					{
-						f.mkdir();
-					}
-					String[] extArr = entry.fileURL.split(Pattern.quote("."));
-					downloadFile(entry.fileURL, f, entry.id + "." + extArr[extArr.length - 1]);
-				}
-				else if (tags.contains("lagomorph"))
-				{
-					File f = new File(outputDir, "lagomorph");
-					if (!f.exists())
-					{
-						f.mkdir();
-					}
-					String[] extArr = entry.fileURL.split(Pattern.quote("."));
-					downloadFile(entry.fileURL, f, entry.id + "." + extArr[extArr.length - 1]);
-				}
-				else if (tags.contains("avian"))
-				{
-					File f = new File(outputDir, "avian");
-					if (!f.exists())
-					{
-						f.mkdir();
-					}
-					String[] extArr = entry.fileURL.split(Pattern.quote("."));
-					downloadFile(entry.fileURL, f, entry.id + "." + extArr[extArr.length - 1]);
-				}
-				else if (tags.contains("pokémon"))
-				{
-					// other pokemon
-					File f = new File(outputDir, "pokemon");
-					if (!f.exists())
-					{
-						f.mkdir();
-					}
-					String[] extArr = entry.fileURL.split(Pattern.quote("."));
-					downloadFile(entry.fileURL, f, entry.id + "." + extArr[extArr.length - 1]);
-				}
-				else
-				{
-					File f = new File(outputDir, "other");
+					File f = new File(outputDir, "assets");
 					if (!f.exists())
 					{
 						f.mkdir();
@@ -193,6 +140,81 @@ public class FurryCollectorMain
 					String[] extArr = entry.fileURL.split(Pattern.quote("."));
 					downloadFile(entry.fileURL, f, entry.id + "." + extArr[extArr.length - 1]);
 					unknown++;
+				}
+				else
+				{
+					if (tags.contains("feline"))
+					{
+						File f = new File(outputDir, "feline");
+						if (!f.exists())
+						{
+							f.mkdir();
+						}
+						String[] extArr = entry.fileURL.split(Pattern.quote("."));
+						downloadFile(entry.fileURL, f, entry.id + "." + extArr[extArr.length - 1]);
+					}
+					else if (tags.contains("canine"))
+					{
+						File f = new File(outputDir, "canine");
+						if (!f.exists())
+						{
+							f.mkdir();
+						}
+						String[] extArr = entry.fileURL.split(Pattern.quote("."));
+						downloadFile(entry.fileURL, f, entry.id + "." + extArr[extArr.length - 1]);
+					}
+					else if (tags.contains("dragon"))
+					{
+						File f = new File(outputDir, "dragon");
+						if (!f.exists())
+						{
+							f.mkdir();
+						}
+						String[] extArr = entry.fileURL.split(Pattern.quote("."));
+						downloadFile(entry.fileURL, f, entry.id + "." + extArr[extArr.length - 1]);
+					}
+					else if (tags.contains("lagomorph"))
+					{
+						File f = new File(outputDir, "lagomorph");
+						if (!f.exists())
+						{
+							f.mkdir();
+						}
+						String[] extArr = entry.fileURL.split(Pattern.quote("."));
+						downloadFile(entry.fileURL, f, entry.id + "." + extArr[extArr.length - 1]);
+					}
+					else if (tags.contains("avian"))
+					{
+						File f = new File(outputDir, "avian");
+						if (!f.exists())
+						{
+							f.mkdir();
+						}
+						String[] extArr = entry.fileURL.split(Pattern.quote("."));
+						downloadFile(entry.fileURL, f, entry.id + "." + extArr[extArr.length - 1]);
+					}
+					else if (tags.contains("pokémon"))
+					{
+						// other pokemon
+						File f = new File(outputDir, "pokemon");
+						if (!f.exists())
+						{
+							f.mkdir();
+						}
+						String[] extArr = entry.fileURL.split(Pattern.quote("."));
+						downloadFile(entry.fileURL, f, entry.id + "." + extArr[extArr.length - 1]);
+					}
+					else
+					{
+						File f = new File(outputDir, "other");
+						if (!f.exists())
+						{
+							f.mkdir();
+						}
+						String[] extArr = entry.fileURL.split(Pattern.quote("."));
+						downloadFile(entry.fileURL, f, entry.id + "." + extArr[extArr.length - 1]);
+						unknown++;
+					}
 				}
 				before_id = entry.id;
 			}
@@ -252,8 +274,18 @@ public class FurryCollectorMain
 			int score = curObj.getInt("score");
 			int id = curObj.getInt("id");
 			JSONObject createdAt = curObj.getJSONObject("created_at");
+			JSONArray artists = null;
+			JSONArray sources = null;
+			if (curObj.has("artist"))
+			{
+				artists = curObj.getJSONArray("artist");
+			}
+			if (curObj.has("sources"))
+			{
+				sources = curObj.getJSONArray("sources");
+			}
 			long creationdate = createdAt.getLong("s");
-			al.add(new Entry(id, url, tags, rating, score, creationdate));
+			al.add(new Entry(id, url, tags, rating, score, creationdate, artists, sources));
 		}
 		return al;
 	}
