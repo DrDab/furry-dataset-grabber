@@ -193,7 +193,7 @@ public class FurryCollectorMain
 						String[] extArr = entry.fileURL.split(Pattern.quote("."));
 						downloadFile(entry.fileURL, f, entry.id + "." + extArr[extArr.length - 1]);
 					}
-					else if (tags.contains("pokémon"))
+					else if (tags.contains("pokemon"))
 					{
 						// other pokemon
 						File f = new File(outputDir, "pokemon");
